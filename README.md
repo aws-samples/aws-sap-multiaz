@@ -40,9 +40,11 @@ Before executing this solution, we need to update **ZTAWSMULTIAZ** table to meet
 * APHOSTS : Application server instance name.
     * **sappas**, **sapaas02** are same az with **sappridb(Database)**
     * **sapaas01**, **sapaas03** are same az with **sapsecdb(Database)**
+
 ![3.optables](./readmeImage/3.optables.png)
 
 * You can insert rows like the upper table using a transaction via **SE16N**. Search **ZTAWSMULTIAZ** table and click the execute button. you can see the table data and also execute CRUD(Create, Read, Update, Delete) function.
+
 ![4.se16n](./readmeImage/4.se16n.png)
 
 
