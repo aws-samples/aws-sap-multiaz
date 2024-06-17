@@ -5,6 +5,13 @@
 *&---------------------------------------------------------------------*
 REPORT ZAWS_MULTIAZ_NETWORK.
 
+* Please change your sdk profile and sns topic arn.
+DATA: gv_sdkprofile TYPE char20,
+      gv_snsarn TYPE string.
+
+gv_sdkprofile = '<change your SDK profile>'.
+gv_snsarn = '<change your sns topic arn>'.
+
 CLASS ZCL_LOGON_GROUP DEFINITION.
   PUBLIC SECTION.
 
@@ -257,6 +264,12 @@ CLASS ZCL_SDK_SNS IMPLEMENTATION.
 
      CATCH /aws1/cx_snsnotfoundexception.
         WRITE:/ 'Topic does not exist.'.
+     CATCH /aws1/cx_rt_service_generic.
+        WRITE:/ 'Generic Service call error'.
+     CATCH /aws1/cx_rt_no_auth_generic.
+        WRITE:/ 'Generic lack of authorization'.
+     CATCH /aws1/cx_rt_technical_generic.
+        WRITE:/ 'Technical errors'.
     ENDTRY.
 
   ENDMETHOD.
