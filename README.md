@@ -53,7 +53,7 @@ Before executing this solution, we need to update **ZTAWSMULTIAZ** table to meet
 This solution also includes the ability to push messages to Amazon SNS using the **AWS SDK for SAP ABAP** to notify BC admins of alerts via email or SNS. If the Active database server would be fail, it will send an **"HANA DB server takeover to sapsecdb or sappridb"** as as elert message. After succesfully chaing the groups, send an **"Successfully changed Logon/RFC/Batchjob Group"** as as elert message.
 
 * If you need to configure AWS SDK for SAP ABAP, Please visit to [AWS SDK for SAP ABAP Workshop - Pre-requisite infrastructure on own AWS account](https://catalog.workshops.aws/abapsdk/en-US/lab99)
-* And then, you need to create a SNS topic and cofigure relevant settings. Please go through [AWS SDK for SAP ABAP Workshop - Lab03. Amazon SNS](https://catalog.workshops.aws/abapsdk/en-US/lab03). Since the main ABAP program includes it, you don't need to create a sample program.
+* You need to create a SNS topic and cofigure relevant settings. Please go through [AWS SDK for SAP ABAP Workshop - Lab03. Amazon SNS](https://catalog.workshops.aws/abapsdk/en-US/lab03). Since the main ABAP program includes it, you don't need to create a sample program.
     
 ![5.sdksns](./readmeImage/5.sdksns.png)
 
@@ -62,8 +62,8 @@ This solution also includes the ability to push messages to Amazon SNS using the
 Now, we will create a main ABAP Program. you can create it using the ABAP Editor transaction via **SE38**. 
 
 * If you would be not familiar with ABAP develop, please visit to [AWS SDK for SAP ABAP Workshop - Lab03. Amazon SNS - 4.Write the sample code](https://catalog.workshops.aws/abapsdk/en-US/lab03/lab03-01#4.-write-the-sample-code).
-* And Please refer to the source code here - [multiaz_network_optimized_solution](./multiaz_network_optimized_solution/ZAWS_MULTIAZ_NETWORK.abap). And drag and copy & paste in the ABAP Editor(SE38)
-* And In the ABAP code, change your SDK profile and SNS topic ARN that create in the previous step.
+* Please refer to the source code - [multiaz_network_optimized_solution](./multiaz_network_optimized_solution/ZAWS_MULTIAZ_NETWORK.abap). And drag and copy & paste in the ABAP Editor(SE38)
+* In the ABAP code, change your SDK profile and SNS topic ARN that create in the previous step.
 
     ```ABAP
     * Please change your sdk profile and sns topic arn.
