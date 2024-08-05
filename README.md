@@ -21,7 +21,7 @@ The solution uses two operational tables.
 1. **ZTAWSMULTIDB** : Save the result of SQL execution of getting an active database hostname.
 2. **ZTAWSMULTIAZ** : Save the configuration information of changing application servers each groups.
 
-You can create tables also create **ZE_AWS_DBHOST**,**ZE_AWS_GROUPTYPE**,  data elements using a transaction via **SE11**. Please refer to the below pictures for table structures.
+You need to create **ZTAWSMULTIDB**, **ZTAWSMULTIAZ** tables and also create **ZE_AWS_DBHOST**,**ZE_AWS_GROUPTYPE** data elements using a transaction via **SE11**. Please refer to the below pictures for table structures.
 
 * ZTAWSMULTIDB Table
 ![1.ZTAWSMULTIDB](./readmeImage/1.ZTAWSMULTIDB.png)
@@ -50,7 +50,7 @@ Before executing this solution, we need to update **ZTAWSMULTIAZ** table to meet
 
 ## 3. Configuring AWS SDK for SAP ABAP
 
-This solution also includes the ability to push messages to Amazon SNS using the **AWS SDK for SAP ABAP** to notify BC admins of alerts via email or SNS. If the Active database server would be fail, it will send an **"HANA DB server takeover to sapsecdb or sappridb"** as as elert message. After succesfully chaing the groups, send an **"Successfully changed Logon/RFC/Batchjob Group"** as as elert message.
+This solution also includes the ability to push messages to Amazon SNS using the **AWS SDK for SAP ABAP** to notify BC admins of alerts via email or SNS. If the Active database server would be fail, it will send an **"HANA DB server takeover to sapsecdb or sappridb"** as as elert message. After succesfully changing the groups, send an **"Successfully changed Logon/RFC/Batchjob Group"** as as elert message.
 
 * If you need to configure AWS SDK for SAP ABAP, Please visit to [AWS SDK for SAP ABAP Workshop - Pre-requisite infrastructure on own AWS account](https://catalog.workshops.aws/abapsdk/en-US/lab99)
 * You need to create a SNS topic and cofigure relevant settings. Please go through [AWS SDK for SAP ABAP Workshop - Lab03. Amazon SNS](https://catalog.workshops.aws/abapsdk/en-US/lab03). Since the main ABAP program includes it, you don't need to create a sample program.
@@ -76,7 +76,7 @@ Now, we will create a main ABAP Program. you can create it using the ABAP Editor
 
 ## 5. Define a Background Job.
 
-Finally, we will define a background job to execute a main ABAP program every 5 minutes. You can define it using a transaction via **SM36**.
+Finally, we will define a background job to periodically(for example, every 5 minutes) execute a main ABAP program. You can define it using a transaction via **SM36**.
 
 * Enter **MULTIAZ_NETWORK** as the Job Name, and click **Save** button.
 * Select **ZAWS_MULTIAZ_NETWORK** as the ABAP program, and click **Save** button.
