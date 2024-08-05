@@ -24,13 +24,20 @@ The solution uses two operational tables.
 You need to create **ZTAWSMULTIDB**, **ZTAWSMULTIAZ** tables and also create **ZE_AWS_DBHOST**,**ZE_AWS_GROUPTYPE** data elements using a transaction via **SE11**. Please refer to the below pictures for table structures.
 
 * ZTAWSMULTIDB Table
-![1.ZTAWSMULTIDB](./readmeImage/1.ZTAWSMULTIDB.png)
+    
+    ![1.ZTAWSMULTIDB](./readmeImage/1.ZTAWSMULTIDB.png)
+
 * ZTAWSMULTIAZ Table
-![2.ZTAWSMULTIAZ](./readmeImage/2.ZTAWSMULTIAZ.png)
+    
+    ![2.ZTAWSMULTIAZ](./readmeImage/2.ZTAWSMULTIAZ.png)
+
 * ZE_AWS_DBHOST Data Element
-![ZE_AWS_DBHOST](./readmeImage/ZE_AWS_DBHOST.png)
+
+    ![ZE_AWS_DBHOST](./readmeImage/ZE_AWS_DBHOST.png)
+    
 * ZE_AWS_GROUPTYPE Data Element
-![ZE_AWS_GROUPTYPE](./readmeImage/ZE_AWS_GROUPTYPE.png)
+
+    ![ZE_AWS_GROUPTYPE](./readmeImage/ZE_AWS_GROUPTYPE.png)
 
 ## 2. Update operational tables
 
