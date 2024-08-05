@@ -27,6 +27,10 @@ You need to create **ZTAWSMULTIDB**, **ZTAWSMULTIAZ** tables and also create **Z
 ![1.ZTAWSMULTIDB](./readmeImage/1.ZTAWSMULTIDB.png)
 * ZTAWSMULTIAZ Table
 ![2.ZTAWSMULTIAZ](./readmeImage/2.ZTAWSMULTIAZ.png)
+* ZE_AWS_DBHOST Data Element
+![ZE_AWS_DBHOST](./readmeImage/ZE_AWS_DBHOST.png)
+* ZE_AWS_GROUPTYPE Data Element
+![ZE_AWS_GROUPTYPE](./readmeImage/ZE_AWS_GROUPTYPE.png)
 
 ## 2. Update operational tables
 
