@@ -7,9 +7,7 @@ CLASS ZCL_GET_DBHOST IMPLEMENTATION.
           lo_stmt TYPE REF TO cl_sql_statement,
           lo_result TYPE REF TO cl_sql_result_set,
           lv_sql TYPE string,
-          lt_data TYPE REF TO data,
-          lt_dbhost TYPE TABLE OF ZTAWSMULTIDB,
-          ls_dbhost TYPE ZTAWSMULTIDB.
+          lt_data TYPE REF TO data.
 
     TRY.
       lo_con = cl_sql_connection=>get_connection( ).
