@@ -286,7 +286,7 @@ CLASS ZCL_SDK_SNS IMPLEMENTATION.
 
 ENDCLASS.
 
-* CLASS - Get a current Database hostname using ABAP ADBC.
+* CLASS - Get a hostname of the Active HANA Database Server using ABAP ADBC.
 
 CLASS ZCL_GET_DBHOST DEFINITION.
 
