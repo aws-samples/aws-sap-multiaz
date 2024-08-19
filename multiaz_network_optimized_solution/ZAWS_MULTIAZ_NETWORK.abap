@@ -6,11 +6,13 @@
 REPORT ZAWS_MULTIAZ_NETWORK.
 
 * Please change your sdk profile and sns topic arn.
-DATA: gv_sdkprofile TYPE char20,
+DATA: gv_sdkprofile TYPE /AWS1/RT_PROFILE_ID,
       gv_snsarn TYPE string.
 
 gv_sdkprofile = '<change your SDK profile>'.
 gv_snsarn = '<change your sns topic arn>'.
+
+* CLASS - LOGON GROUP Update/Delete/Modify
 
 CLASS ZCL_LOGON_GROUP DEFINITION.
   PUBLIC SECTION.
@@ -42,27 +44,6 @@ CLASS ZCL_LOGON_GROUP DEFINITION.
 
 ENDCLASS.
 
-CLASS ZCL_BP_SERVER_GROUP DEFINITION INHERITING FROM CL_BP_SERVER_GROUP.
-  PUBLIC SECTION.
-    METHODS : LOAD_SRV_LIST IMPORTING p_groupname TYPE char20,
-              GET_SRV_LIST EXPORTING p_list TYPE BPSRVENTRY,
-              DEL_FROM_SRV_LIST IMPORTING p_srv TYPE BPSRVLINE,
-              ADD_TO_SRV_LIST IMPORTING p_srv TYPE BPSRVLINE,
-              SAVE_SRV_LIST_DB.
-ENDCLASS.
-
-CLASS ZCL_SDK_SNS DEFINITION.
-  PUBLIC SECTION.
-    METHODS: constructor IMPORTING i_profile TYPE /AWS1/RT_PROFILE_ID
-                                   i_snsarn TYPE string.
-
-    METHODS: send_message IMPORTING p_text TYPE string.
-  PRIVATE SECTION.
-   DATA: gv_profile TYPE /AWS1/RT_PROFILE_ID,
-         gv_snsarn TYPE string.
-
-ENDCLASS.
-
 CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
 
   METHOD: constructor.
@@ -77,23 +58,27 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
           lt_where LIKE TABLE OF ls_where.
 
 * 1.1 To get the group list.
+    TRY.
+      ls_where = |GROUPTYPE = '{ gv_grouptype }'|.
+      APPEND  ls_where to lt_where.
 
-    ls_where = |GROUPTYPE = '{ gv_grouptype }'|.
-    APPEND  ls_where to lt_where.
-
-    SELECT  DISTINCT GROUPNAME, GROUPTYPE INTO TABLE @gt_group FROM ZTAWSMULTIAZ WHERE (lt_where).
+      SELECT  DISTINCT GROUPNAME, GROUPTYPE INTO TABLE @gt_group FROM ZTAWSMULTIAZ WHERE (lt_where).
 
 * 1.2 To get the new application server list.
-    CLEAR lt_where.
+      CLEAR lt_where.
 
-    ls_where = |GROUPTYPE = '{ gv_grouptype }'|.
-    APPEND ls_where to lt_where.
-    ls_where = 'AND'.
-    APPEND ls_where to lt_where.
-    ls_where = |DBHOST = '{ gv_dbhost }'|.
-    APPEND  ls_where to lt_where.
+      ls_where = |GROUPTYPE = '{ gv_grouptype }'|.
+      APPEND ls_where to lt_where.
+      ls_where = 'AND'.
+      APPEND ls_where to lt_where.
+      ls_where = |DBHOST = '{ gv_dbhost }'|.
+      APPEND  ls_where to lt_where.
 
-    SELECT * INTO TABLE gt_add_server FROM ZTAWSMULTIAZ WHERE (lt_where).
+      SELECT * INTO TABLE gt_add_server FROM ZTAWSMULTIAZ WHERE (lt_where).
+
+      CATCH CX_SY_DYNAMIC_OSQL_ERROR INTO DATA(err).
+        MESSAGE err->get_text( ) TYPE 'E'.
+    ENDTRY.
   ENDMETHOD.
 
 * 2. Delete application servers in the group.
@@ -205,6 +190,17 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
 
 ENDCLASS.
 
+* CLASS - Background Process(Batch) GROUP Update/Delete/Modify
+
+CLASS ZCL_BP_SERVER_GROUP DEFINITION INHERITING FROM CL_BP_SERVER_GROUP.
+  PUBLIC SECTION.
+    METHODS : LOAD_SRV_LIST IMPORTING p_groupname TYPE char20,
+              GET_SRV_LIST EXPORTING p_list TYPE BPSRVENTRY,
+              DEL_FROM_SRV_LIST IMPORTING p_srv TYPE BPSRVLINE,
+              ADD_TO_SRV_LIST IMPORTING p_srv TYPE BPSRVLINE,
+              SAVE_SRV_LIST_DB.
+ENDCLASS.
+
 CLASS ZCL_BP_SERVER_GROUP IMPLEMENTATION.
   METHOD LOAD_SRV_LIST.
     TRY.
@@ -242,6 +238,20 @@ CLASS ZCL_BP_SERVER_GROUP IMPLEMENTATION.
 
 ENDCLASS.
 
+* CLASS - Send alert messages using AWS SDK for SAP ABAP with Amazon SNS.
+
+CLASS ZCL_SDK_SNS DEFINITION.
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING i_profile TYPE /AWS1/RT_PROFILE_ID
+                                   i_snsarn TYPE string.
+
+    METHODS: send_message IMPORTING p_text TYPE string.
+  PRIVATE SECTION.
+   DATA: gv_profile TYPE /AWS1/RT_PROFILE_ID,
+         gv_snsarn TYPE string.
+
+ENDCLASS.
+
 CLASS ZCL_SDK_SNS IMPLEMENTATION.
   METHOD: constructor.
     gv_profile = i_profile.
@@ -276,6 +286,53 @@ CLASS ZCL_SDK_SNS IMPLEMENTATION.
 
 ENDCLASS.
 
+* CLASS - Get a current Database hostname using ABAP ADBC.
+
+CLASS ZCL_GET_DBHOST DEFINITION.
+
+  PUBLIC SECTION.
+    METHODS: constructor,
+             get_hostname EXPORTING p_hostname TYPE char20.
+
+  PRIVATE SECTION.
+    DATA:  gv_hostname TYPE char20.
+
+ENDCLASS.
+
+CLASS ZCL_GET_DBHOST IMPLEMENTATION.
+
+  METHOD constructor.
+    DATA: lo_con TYPE REF TO cl_sql_connection,
+          lo_stmt TYPE REF TO cl_sql_statement,
+          lo_result TYPE REF TO cl_sql_result_set,
+          lv_sql TYPE string,
+          lt_data TYPE REF TO data,
+          lt_dbhost TYPE TABLE OF ZTAWSMULTIDB,
+          ls_dbhost TYPE ZTAWSMULTIDB.
+
+    TRY.
+      lo_con = cl_sql_connection=>get_connection( ).
+      lo_stmt = lo_con->create_statement( ).
+
+      lv_sql = |select host from M_DATABASE|.
+      lo_result = lo_stmt->execute_query( lv_sql ).
+
+      get REFERENCE OF gv_hostname into lt_data.
+      lo_result->set_param( lt_data ).
+      lo_result->next( ).
+
+      lo_con->close( ).
+      CATCH cx_sql_exception INTO DATA(err).
+        MESSAGE err->get_text( ) TYPE 'E'.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD get_hostname.
+      p_hostname = gv_hostname.
+  ENDMETHOD.
+
+ENDCLASS.
+
 START-OF-SELECTION.
 
 
@@ -287,19 +344,21 @@ WRITE:/ '-------------------------------------------------'.
 DATA: lt_dbhost TYPE TABLE OF ZTAWSMULTIDB,
       ls_dbhost TYPE ZTAWSMULTIDB,
       ls_current_dbhost TYPE ZTAWSMULTIDB,
+      lo_get_dbhost TYPE REF TO ZCL_GET_DBHOST,
       lv_hostname TYPE char20,
       lo_sns TYPE REF TO ZCL_SDK_SNS.
 
+
+CREATE OBJECT lo_get_dbhost.
+
+CALL METHOD: lo_get_dbhost->get_hostname
+             IMPORTING p_hostname = lv_hostname.
+
 CREATE OBJECT lo_sns
   EXPORTING
-    i_profile = 'DEMO'
-    i_snsarn = 'arn:aws:sns:us-east-1:972987734243:multiaz-network-solution'.
+    i_profile = gv_sdkprofile
+    i_snsarn = gv_snsarn.
 
-EXEC SQL.
-  SELECT HOST
-    INTO  :lv_hostname
-    FROM SYS.M_DATABASE
-ENDEXEC.
 
 SELECT * INTO TABLE lt_dbhost FROM ZTAWSMULTIDB.
 
@@ -389,17 +448,24 @@ DATA: lv_grouptype TYPE char1,
       lt_add_server TYPE TABLE OF ZTAWSMULTIAZ,
       ls_add_server TYPE ZTAWSMULTIAZ.
 
-SELECT  DISTINCT GROUPNAME, GROUPTYPE INTO TABLE @lt_group FROM ZTAWSMULTIAZ WHERE GROUPTYPE = 'B'.
+TRY.
 
-lv_grouptype = 'B'.
-ls_where = |GROUPTYPE = '{ lv_grouptype }'|.
-APPEND ls_where to lt_where.
-ls_where = 'AND'.
-APPEND ls_where to lt_where.
-ls_where = |DBHOST = '{ lv_hostname }'|.
-APPEND  ls_where to lt_where.
+  SELECT  DISTINCT GROUPNAME, GROUPTYPE INTO TABLE @lt_group FROM ZTAWSMULTIAZ WHERE GROUPTYPE = 'B'.
 
-SELECT * INTO TABLE lt_add_server FROM ZTAWSMULTIAZ WHERE (lt_where).
+  lv_grouptype = 'B'.
+  ls_where = |GROUPTYPE = '{ lv_grouptype }'|.
+  APPEND ls_where to lt_where.
+  ls_where = 'AND'.
+  APPEND ls_where to lt_where.
+  ls_where = |DBHOST = '{ lv_hostname }'|.
+  APPEND  ls_where to lt_where.
+
+  SELECT * INTO TABLE lt_add_server FROM ZTAWSMULTIAZ WHERE (lt_where).
+
+  CATCH CX_SY_DYNAMIC_OSQL_ERROR INTO DATA(err).
+    MESSAGE err->get_text( ) TYPE 'E'.
+
+ENDTRY.
 
 * 4.2 Change the application server lists in groups.
 
