@@ -83,7 +83,7 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
       IF sy-subrc EQ 0.
         gv_job_status = abap_true.
       ELSE.
-        WRITE: / 'Error occurred while retrieving ZTAWSMULTIAZ table'.
+        WRITE: / 'Error occurred while retrieving the operation table(ZTAWSMULTIAZ)'.
         gv_job_status = abap_false.
       ENDIF.
 
@@ -146,9 +146,9 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
         OTHERS         = 2.
 
     IF sy-subrc = 0.
-      WRITE: / 'Successfully delete server in the list'.
+      WRITE: / 'Successfully delete servers in the list'.
     ELSE.
-      WRITE: / 'Unsuccessfully delete server in the list'.
+      WRITE: / 'Unsuccessfully delete servers in the list'.
     ENDIF.
 
   ENDMETHOD.
@@ -411,6 +411,10 @@ IF gv_job_status = abap_true.
 * 2.3 Add application servers in the group.
   CALL METHOD lo_logon_group->add_group_servers.
 
+ELSE.
+  CALL METHOD lo_sns->SEND_MESSAGE
+      EXPORTING p_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
+
 ENDIF.
 
 * 3. Change RFC  Group
@@ -437,6 +441,10 @@ IF gv_job_status = abap_true.
   CALL METHOD lo_rfc_group->delete_group_servers.
 * 3.3 Add application servers in the group.
   CALL METHOD lo_rfc_group->add_group_servers.
+
+ELSE.
+  CALL METHOD lo_sns->SEND_MESSAGE
+      EXPORTING p_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
 
 ENDIF.
 
@@ -479,7 +487,8 @@ TRY.
   IF sy-subrc EQ 0.
      gv_job_status = abap_true.
   ELSE.
-     WRITE: / 'Error occurred while retrieving ZTAWSMULTIAZ table'.
+     CALL METHOD lo_sns->SEND_MESSAGE
+       EXPORTING p_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
      gv_job_status = abap_false.
   ENDIF.
 
@@ -531,13 +540,8 @@ IF gv_job_status = abap_true.
 
 ENDIF.
 
-IF gv_job_status = abap_true.
-  CALL METHOD lo_sns->SEND_MESSAGE
-     EXPORTING p_text = 'Successfully changed Logon/RFC/Batchjob Group'.
-ELSE.
-  CALL METHOD lo_sns->SEND_MESSAGE
-     EXPORTING p_text = 'Unsuccessfully changed Logon/RFC/Batchjob Group'.
-ENDIF.
+CALL METHOD lo_sns->SEND_MESSAGE
+  EXPORTING p_text = 'Finished Automate and Optimise SAP Network Performance in a Multi-AZ deployment Solution'.
 
 WRITE: / '-------------------------------------------------'.
 WRITE:/ 'Program End'.
