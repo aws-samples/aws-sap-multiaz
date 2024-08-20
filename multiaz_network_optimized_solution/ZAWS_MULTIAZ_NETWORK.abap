@@ -145,10 +145,8 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
         no_group_found = 1
         OTHERS         = 2.
 
-    IF sy-subrc = 0.
-      WRITE: / 'Successfully delete servers in the list'.
-    ELSE.
-      WRITE: / 'Unsuccessfully delete servers in the list'.
+    IF sy-subrc <> 0.
+      WRITE: / 'Please monitor the Server Group.'.
     ENDIF.
 
   ENDMETHOD.
@@ -191,10 +189,8 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
         no_group_found = 1
         OTHERS         = 2.
 
-    IF sy-subrc = 0.
-      WRITE: / 'Server Add Successful'.
-    ELSE.
-      WRITE: / sy-subrc.
+    IF sy-subrc <> 0.
+      WRITE: / 'Please verify Logon/RFC Group'.
     ENDIF.
 
   ENDMETHOD.
@@ -540,8 +536,9 @@ IF gv_job_status = abap_true.
 
 ENDIF.
 
+WRITE: / '-------------------------------------------------'.
+
 CALL METHOD lo_sns->SEND_MESSAGE
   EXPORTING p_text = 'Finished Automate and Optimise SAP Network Performance in a Multi-AZ deployment Solution'.
 
-WRITE: / '-------------------------------------------------'.
 WRITE:/ 'Program End'.
