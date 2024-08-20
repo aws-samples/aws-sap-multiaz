@@ -12,6 +12,10 @@ DATA: gv_sdkprofile TYPE /AWS1/RT_PROFILE_ID,
 gv_sdkprofile = '<change your SDK profile>'.
 gv_snsarn = '<change your sns topic arn>'.
 
+* Using gv_job_status to continue or skip steps due to job status.
+DATA: gv_job_status TYPE abap_bool.
+gv_job_status = abap_true.
+
 * CLASS - LOGON GROUP Update/Delete/Modify
 
 CLASS ZCL_LOGON_GROUP DEFINITION.
@@ -76,6 +80,13 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
 
       SELECT * INTO TABLE gt_add_server FROM ZTAWSMULTIAZ WHERE (lt_where).
 
+      IF sy-subrc EQ 0.
+        gv_job_status = abap_true.
+      ELSE.
+        WRITE: / 'Error occurred while retrieving ZTAWSMULTIAZ table'.
+        gv_job_status = abap_false.
+      ENDIF.
+
       CATCH CX_SY_DYNAMIC_OSQL_ERROR INTO DATA(err).
         MESSAGE err->get_text( ) TYPE 'E'.
     ENDTRY.
@@ -135,9 +146,9 @@ CLASS ZCL_LOGON_GROUP IMPLEMENTATION.
         OTHERS         = 2.
 
     IF sy-subrc = 0.
-      WRITE: / 'Server Delete Successful'.
+      WRITE: / 'Successfully delete server in the list'.
     ELSE.
-      WRITE: / sy-subrc.
+      WRITE: / 'Unsuccessfully delete server in the list'.
     ENDIF.
 
   ENDMETHOD.
@@ -392,13 +403,15 @@ CREATE OBJECT lo_logon_group
 
 CALL METHOD lo_logon_group->load_group.
 
+* Checking status - retrieve operation table
+IF gv_job_status = abap_true.
+
 * 2.2 Delete application servers in the group.
-
-CALL METHOD lo_logon_group->delete_group_servers.
-
+  CALL METHOD lo_logon_group->delete_group_servers.
 * 2.3 Add application servers in the group.
+  CALL METHOD lo_logon_group->add_group_servers.
 
-CALL METHOD lo_logon_group->add_group_servers.
+ENDIF.
 
 * 3. Change RFC  Group
 
@@ -416,13 +429,16 @@ CREATE OBJECT lo_rfc_group
 
 CALL METHOD lo_rfc_group->load_group.
 
+
+* Checking status - retrieve operation table
+IF gv_job_status = abap_true.
+
 * 3.2 Delete application servers in the group.
-
-CALL METHOD lo_rfc_group->delete_group_servers.
-
+  CALL METHOD lo_rfc_group->delete_group_servers.
 * 3.3 Add application servers in the group.
+  CALL METHOD lo_rfc_group->add_group_servers.
 
-CALL METHOD lo_rfc_group->add_group_servers.
+ENDIF.
 
 * 4. Change Background Group
 
@@ -460,6 +476,13 @@ TRY.
 
   SELECT * INTO TABLE lt_add_server FROM ZTAWSMULTIAZ WHERE (lt_where).
 
+  IF sy-subrc EQ 0.
+     gv_job_status = abap_true.
+  ELSE.
+     WRITE: / 'Error occurred while retrieving ZTAWSMULTIAZ table'.
+     gv_job_status = abap_false.
+  ENDIF.
+
   CATCH CX_SY_DYNAMIC_OSQL_ERROR INTO DATA(err).
     MESSAGE err->get_text( ) TYPE 'E'.
 
@@ -473,37 +496,48 @@ DATA:  lo_bp_server_group TYPE REF TO ZCL_BP_SERVER_GROUP,
        ls_add_srv_list TYPE BPSRVLINE,
        lv_groupname TYPE BPSRVGRP.
 
-LOOP AT lt_group INTO ls_group.
 
-  CREATE OBJECT lo_bp_server_group.
+* Checking status - retrieve operation table
+IF gv_job_status = abap_true.
 
-  WRITE:/ ls_group-group_name, 'Change Application Servers'.
+  LOOP AT lt_group INTO ls_group.
 
-  CALL METHOD lo_bp_server_group->LOAD_SRV_LIST
-              EXPORTING p_groupname = ls_group-group_name.
+    CREATE OBJECT lo_bp_server_group.
 
-  CALL METHOD lo_bp_server_group->GET_SRV_LIST
-              IMPORTING p_list = lt_bp_srv_list.
+    WRITE:/ ls_group-group_name, 'Change Application Servers'.
 
-  LOOP AT lt_bp_srv_list INTO ls_bp_srv.
-    CALL METHOD lo_bp_server_group->DEL_FROM_SRV_LIST
-                EXPORTING p_srv = ls_bp_srv.
+    CALL METHOD lo_bp_server_group->LOAD_SRV_LIST
+                EXPORTING p_groupname = ls_group-group_name.
+
+    CALL METHOD lo_bp_server_group->GET_SRV_LIST
+                IMPORTING p_list = lt_bp_srv_list.
+
+    LOOP AT lt_bp_srv_list INTO ls_bp_srv.
+      CALL METHOD lo_bp_server_group->DEL_FROM_SRV_LIST
+                  EXPORTING p_srv = ls_bp_srv.
+    ENDLOOP.
+
+    LOOP AT lt_add_server INTO ls_add_server.
+      IF ls_add_server-GROUPTYPE = ls_group-group_type and ls_add_server-GROUPNAME = ls_group-group_name.
+        ls_add_srv_list-appsrvname = ls_add_server-APHOSTS.
+        CALL METHOD lo_bp_server_group->ADD_TO_SRV_LIST
+                    EXPORTING p_srv = ls_add_srv_list.
+      ENDIF.
+    ENDLOOP.
+
+    CALL METHOD lo_bp_server_group->SAVE_SRV_LIST_DB.
+
   ENDLOOP.
 
-  LOOP AT lt_add_server INTO ls_add_server.
-    IF ls_add_server-GROUPTYPE = ls_group-group_type and ls_add_server-GROUPNAME = ls_group-group_name.
-      ls_add_srv_list-appsrvname = ls_add_server-APHOSTS.
-      CALL METHOD lo_bp_server_group->ADD_TO_SRV_LIST
-                  EXPORTING p_srv = ls_add_srv_list.
-    ENDIF.
-  ENDLOOP.
+ENDIF.
 
-  CALL METHOD lo_bp_server_group->SAVE_SRV_LIST_DB.
-
-ENDLOOP.
-
-CALL METHOD lo_sns->SEND_MESSAGE
-   EXPORTING p_text = 'Successfully changed Logon/RFC/Batchjob Group'.
+IF gv_job_status = abap_true.
+  CALL METHOD lo_sns->SEND_MESSAGE
+     EXPORTING p_text = 'Successfully changed Logon/RFC/Batchjob Group'.
+ELSE.
+  CALL METHOD lo_sns->SEND_MESSAGE
+     EXPORTING p_text = 'Unsuccessfully changed Logon/RFC/Batchjob Group'.
+ENDIF.
 
 WRITE: / '-------------------------------------------------'.
 WRITE:/ 'Program End'.
