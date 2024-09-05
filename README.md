@@ -73,7 +73,7 @@ This solution also includes the ability to push messages to Amazon SNS using the
 Now, we will create a main ABAP Program. you can create it using the ABAP Editor transaction via **SE38**. 
 
 * If you would be not familiar with ABAP develop, please visit to [AWS SDK for SAP ABAP Workshop - Lab03. Amazon SNS - 4.Write the sample code](https://catalog.workshops.aws/abapsdk/en-US/lab03/lab03-01#4.-write-the-sample-code).
-* Please refer to the source code - [multiaz_network_optimized_solution](./multiaz_network_optimized_solution/ZAWS_MULTIAZ_NETWORK.abap). And drag and copy & paste in the ABAP Editor(SE38)
+* Please refer to the source code - [zaws_multiaz_network](./src/zaws_multiaz_network.prog.abap). And drag and copy & paste in the ABAP Editor(SE38)
 * In the ABAP code, change your SDK profile and SNS topic ARN that create in the previous step.
 
     ```ABAP
