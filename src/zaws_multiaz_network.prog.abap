@@ -10,10 +10,12 @@ DATA: gv_sdkprofile TYPE /AWS1/RT_PROFILE_ID,
       gv_snsarn TYPE string.
 
 * Please change your sdk profile and sns topic arn.
+
 gv_sdkprofile = '<change your SDK profile>'.
 gv_snsarn = '<change your sns topic arn>'.
 
 * Using gv_job_status to continue or skip steps due to job status.
+
 DATA: gv_job_status TYPE abap_bool.
 gv_job_status = abap_true.
 
