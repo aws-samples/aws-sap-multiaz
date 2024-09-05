@@ -9,8 +9,8 @@ REPORT ZAWS_MULTIAZ_NETWORK.
 DATA: gv_sdkprofile TYPE /AWS1/RT_PROFILE_ID,
       gv_snsarn TYPE string.
 
-gv_sdkprofile = 'DEMO'.
-gv_snsarn = 'arn:aws:sns:us-east-1:972987734243:multiaz-network-solution'.
+gv_sdkprofile = '<change your SDK profile>'.
+gv_snsarn = '<change your sns topic arn>'.
 
 * Using gv_job_status to continue or skip steps due to job status.
 DATA: gv_job_status TYPE abap_bool.
