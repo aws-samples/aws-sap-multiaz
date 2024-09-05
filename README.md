@@ -77,10 +77,10 @@ Now, we will create a main ABAP Program. you can create it using the ABAP Editor
 * In the ABAP code, change your SDK profile and SNS topic ARN that create in the previous step.
 
     ```ABAP
-    * Please change your sdk profile and sns topic arn.
     DATA: gv_sdkprofile TYPE char20,
           gv_snsarn TYPE string.
 
+    * Please change your sdk profile and sns topic arn.
     gv_sdkprofile = '<change your SDK profile>'.
     gv_snsarn = '<change your sns topic arn>'.
     ```
