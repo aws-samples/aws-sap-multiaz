@@ -5,10 +5,11 @@
 *&---------------------------------------------------------------------*
 REPORT ZAWS_MULTIAZ_NETWORK.
 
-* Please change your sdk profile and sns topic arn.
+
 DATA: gv_sdkprofile TYPE /AWS1/RT_PROFILE_ID,
       gv_snsarn TYPE string.
 
+* Please change your sdk profile and sns topic arn.
 gv_sdkprofile = '<change your SDK profile>'.
 gv_snsarn = '<change your sns topic arn>'.
 
