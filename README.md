@@ -62,7 +62,7 @@ This solution also includes the ability to push messages to Amazon SNS using the
 
 ## 4. Modify a main ABAP Program.
 
-In the main ABAP program(**/AWSSAMP/MAZ_SOL**), you need to change your SDK profile and SNS topic ARN that create in the previous step.
+In the main ABAP program(**/AWSSAMP/MAZ_SOL**), you need to change your SDK profile and SNS topic ARN that has created in the previous step.
 
 * Logon SAPGUI, go to SE38 transaction and change the main ABAP program(**/AWSSAMP/MAZ_SOL**)
 * In the ABAP code, update the gv_sdkprofile and gv_snsarn paraemter.
