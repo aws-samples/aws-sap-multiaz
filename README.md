@@ -79,7 +79,7 @@ In the main ABAP program(**/AWSSAMP/MAZ_SOL**), you need to change your SDK prof
 
 ## 5. Define a Background Job.
 
-Finally, we can define a background job to periodically(for example, every 5 minutes) execute a main ABAP program. You can define it using a transaction via **SM36**.
+Finally, we will define a background job to periodically(for example, every 5 minutes) execute a main ABAP program. You can define it using a transaction via **SM36**.
 
 * Enter **MULTIAZ_NETWORK** as the Job Name, and click **Save** button.
 * Select **/AWSSAMP/MAZ_SOL** as the ABAP program, and click **Save** button.
