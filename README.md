@@ -17,7 +17,7 @@ Here is the overall architecture in this solution
 
 ## 1. Add the Github repo to abapGit
 
-* Login SAPGUI and go tp transaction ZABAPGIT
+* Login SAPGUI and go to the transaction ZABAPGIT
 * Add online repo 
     * URL is https://github.com/aws-samples/aws-sap-multiaz
     * Package should be **/AWSSAMP/MAZ** and click **Create Online Repo**
@@ -28,23 +28,28 @@ Here is the overall architecture in this solution
 
 ## 2. Update operational tables
 
-Before executing this solution, we need to update **/AWSSAMP/MAZ_CO** table to meet our SAP system environment. The below table is a configuration to meet the overall architecture. If you want to meet your environment, After login [AWS EC2 console](https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#Instances:), you can check your system configuration 
+Before executing this solution, we need to update **/AWSSAMP/MAZ_DB**, **/AWSSAMP/MAZ_CO** table to meet our SAP system environment. The below table is a configuration to meet the overall architecture. If you want to meet your environment, After login [AWS EC2 console](https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#Instances:), you can check your system configuration 
 
-* GROUPTYPE
-    * '': Logon Group
-    * 'B': Batch Group
-    * 'S': RFC Server Group
-* GROUPNAME : Logon/Batch/RFC Server Group name
-* DBHOST : DB Hostname
-* APHOSTS : Application server instance name.
-    * e.g. **sappas**, **sapaas02** are same az with **sappridb(Database)**
-    * e.g. **sapaas01**, **sapaas03** are same az with **sapsecdb(Database)**
+* Logon SAPGUI and then you can insert rows like the upper table using a transaction via **SE16N**. Search **/AWSSAMP/MAZ_DB**, **/AWSSAMP/MAZ_CO** table and click the execute button. you can see the table data and also execute CRUD(Create, Read, Update, Delete) function.
 
-![3.optables](./readmeImage/3.optables.png)
+* **/AWSSAMP/MAZ_DB** Table
+    * DBHOST : Current Active DB Hostname
 
-* You can insert rows like the upper table using a transaction via **SE16N**. Search **/AWSSAMP/MAZ_CO** table and click the execute button. you can see the table data and also execute CRUD(Create, Read, Update, Delete) function.
+    ![3.optables](./readmeImage/3.AWSSAMP-MAZ-DB.png)
 
-![4.se16n](./readmeImage/4.se16n.png)
+* **/AWSSAMP/MAZ_CO** Table
+    * GROUPTYPE
+        * '': Logon Group
+        * 'B': Batch Group
+        * 'S': RFC Server Group
+    * GROUPNAME : Logon/Batch/RFC Server Group name
+    * DBHOST : DB Hostname
+    * APHOSTS : Application server instance name.
+        * e.g. **sappas**, **sapaas02** are same az with **sappridb(Database)**
+        * e.g. **sapaas01**, **sapaas03** are same az with **sapsecdb(Database)**
+    
+    ![3.optables](./readmeImage/3.optables.png)
+
 
 ## 3. Configuring AWS SDK for SAP ABAP
 
