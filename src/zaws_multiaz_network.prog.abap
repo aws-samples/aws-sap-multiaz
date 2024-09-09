@@ -248,54 +248,6 @@ CLASS ZCL_BP_SERVER_GROUP IMPLEMENTATION.
 
 ENDCLASS.
 
-* CLASS - Send alert messages using AWS SDK for SAP ABAP with Amazon SNS.
-
-CLASS ZCL_SDK_SNS DEFINITION.
-  PUBLIC SECTION.
-    METHODS: constructor IMPORTING i_profile TYPE /AWS1/RT_PROFILE_ID
-                                   i_snsarn TYPE string.
-
-    METHODS: send_message IMPORTING p_text TYPE string.
-  PRIVATE SECTION.
-   DATA: gv_profile TYPE /AWS1/RT_PROFILE_ID,
-         gv_snsarn TYPE string.
-
-ENDCLASS.
-
-CLASS ZCL_SDK_SNS IMPLEMENTATION.
-  METHOD: constructor.
-    gv_profile = i_profile.
-    gv_snsarn = i_snsarn.
-  ENDMETHOD.
-
-  METHOD: SEND_MESSAGE.
-     TRY.
-        "Create a ABAP SDK session for SNS"
-        DATA(lo_session) = /aws1/cl_rt_session_aws=>create( gv_profile ).
-        DATA(lo_sns) = /aws1/cl_sns_factory=>create( lo_session ).
-
-        "publish a message to SNS topic"
-        DATA(lo_result) = lo_sns->publish(
-          iv_topicarn = gv_snsarn
-          iv_message = p_text
-
-        ).
-        WRITE:/ 'Message published to SNS topic.'.
-
-     CATCH /aws1/cx_snsnotfoundexception.
-        WRITE:/ 'Topic does not exist.'.
-     CATCH /aws1/cx_rt_service_generic.
-        WRITE:/ 'Generic Service call error'.
-     CATCH /aws1/cx_rt_no_auth_generic.
-        WRITE:/ 'Generic lack of authorization'.
-     CATCH /aws1/cx_rt_technical_generic.
-        WRITE:/ 'Technical errors'.
-    ENDTRY.
-
-  ENDMETHOD.
-
-ENDCLASS.
-
 * CLASS - Get a hostname of the Active HANA Database Server using ABAP ADBC.
 
 CLASS ZCL_GET_DBHOST DEFINITION.
@@ -373,7 +325,7 @@ SELECT * INTO TABLE lt_dbhost FROM ZTAWSMULTIDB.
 LOOP AT lt_dbhost INTO ls_dbhost.
   IF lv_hostname NE ls_dbhost-dbhost.
     CALL METHOD lo_sns->SEND_MESSAGE
-       EXPORTING p_text = |HANA DB server takeover to { lv_hostname }|.
+       EXPORTING i_text = |HANA DB server takeover to { lv_hostname }|.
 
     ls_current_dbhost-mandt = '000'.
     ls_current_dbhost-dbhost = lv_hostname.
@@ -412,7 +364,7 @@ IF gv_job_status = abap_true.
 
 ELSE.
   CALL METHOD lo_sns->SEND_MESSAGE
-      EXPORTING p_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
+      EXPORTING i_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
 
 ENDIF.
 
@@ -443,7 +395,7 @@ IF gv_job_status = abap_true.
 
 ELSE.
   CALL METHOD lo_sns->SEND_MESSAGE
-      EXPORTING p_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
+      EXPORTING i_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
 
 ENDIF.
 
@@ -487,7 +439,7 @@ TRY.
      gv_job_status = abap_true.
   ELSE.
      CALL METHOD lo_sns->SEND_MESSAGE
-       EXPORTING p_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
+       EXPORTING i_text = 'Please check the opearion table(ZTAWSMULTIAZ)'.
      gv_job_status = abap_false.
   ENDIF.
 
@@ -542,6 +494,6 @@ ENDIF.
 WRITE: / '-------------------------------------------------'.
 
 CALL METHOD lo_sns->SEND_MESSAGE
-  EXPORTING p_text = 'Finished Automate and Optimise SAP Network Performance in a Multi-AZ deployment Solution'.
+  EXPORTING i_text = 'Finished Automate and Optimise SAP Network Performance in a Multi-AZ deployment Solution'.
 
 WRITE:/ 'Program End'.
