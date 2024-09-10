@@ -69,7 +69,7 @@ Before executing this solution, we need to update **/AWSSAMP/MAZ_DB**, **/AWSSAM
 This solution also includes the ability to push messages to Amazon SNS using the **AWS SDK for SAP ABAP** to notify BC admins of alerts via email or SNS. If the Active database server would be fail, it would send an **"HANA DB server takeover to sapsecdb or sappridb"** as as elert message. After succesfully changing the groups, send an **"Finished Automate and Optimise SAP Network Performance in a Multi-AZ deployment Solution"** as as elert message.
 
 * If you need to install and configure AWS SDK for SAP ABAP, Please visit to [AWS SDK for SAP ABAP Workshop - Pre-requisite infrastructure on own AWS account](https://catalog.workshops.aws/abapsdk/en-US/lab99)
-* During the installation, we must install the SDK for Amazon SNS(Please refer to [Task2 - ABAP SDK Installation](https://catalog.workshops.aws/abapsdk/en-US/lab99/lab99-02)). See below for how to find this CTS Request. The transport request numbers can be changed depending on the SDK version.
+* During the installation, we must install the SDK for Amazon SNS(Please refer to [Task2 - ABAP SDK Installation](https://catalog.workshops.aws/abapsdk/en-US/lab99/lab99-02)). See below for how to find CTS requests for Amazon SNS. The transport request numbers can be changed depending on the SDK version.
 
     ```Bash
     ls -al transports/sns;
