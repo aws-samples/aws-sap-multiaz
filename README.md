@@ -36,7 +36,7 @@ Here is the overall architecture in this solution
       ![1.abapGitSetup](./readmeImage/1.hitthepull.png)
       ![1.namespace](./readmeImage/1.namespace.png)
     * Select "Pull" again and select all other objects.
-      ![1.namespace](./readmeImage/1.pullobject.png)  
+      ![1.pullobject](./readmeImage/1.pullobject.png)  
  * Before installing [AWS SDK for SAP ABAP](#4-configuring-aws-sdk-for-sap-abap), please note that you may encounter syntax errors while activating **/AWSSAMP/MAZ_SOL** program.  
 
 ## 3. Update operational tables
@@ -89,7 +89,7 @@ In the main ABAP program(**/AWSSAMP/MAZ_SOL**), you need to change your SDK prof
 
 
     ```ABAP
-    DATA: gv_sdkprofile TYPE char20,
+    DATA: gv_sdkprofile TYPE /AWS1/RT_PROFILE_ID,
           gv_snsarn TYPE string.
 
     * Please change your sdk profile and sns topic arn.
