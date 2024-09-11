@@ -42,9 +42,9 @@ Here is the overall architecture in this solution
 
 ## 3. Update operational tables
 
-Before executing this solution, we need to update **/AWSSAMP/MAZ_DB**, **/AWSSAMP/MAZ_CO** table to meet our SAP system environment. The below table is a configuration to meet the overall architecture. If you want to meet your environment, After login [AWS EC2 console](https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#Instances:), you can check your system configuration 
+Before executing this solution, we need to update **/AWSSAMP/MAZ_DB**, **/AWSSAMP/MAZ_CO** table to meet our SAP system environment. The below table is an example configuration to meet the overall architecture. If you want to meet your environment, After login [AWS EC2 console](https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#Instances:), you can check your system configuration 
 
-* Logon SAPGUI and then you can insert rows like the upper table using a transaction via **SE16N**. Search **/AWSSAMP/MAZ_DB**, **/AWSSAMP/MAZ_CO** table and click the execute button. you can see the table data and also execute CRUD(Create, Read, Update, Delete) function.
+* Logon SAPGUI and then you can insert rows into tables using a transaction via **SE16N**. Search **/AWSSAMP/MAZ_DB**, **/AWSSAMP/MAZ_CO** table and click the execute button. you can see the table data and also execute CRUD(Create, Read, Update, Delete) function.
 
 * **/AWSSAMP/MAZ_DB** Table
     * DBHOST : Current Active DB Hostname
