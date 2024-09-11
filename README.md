@@ -11,12 +11,13 @@ In this lab, you will learn how to build **Multi-AZ network optimized solution**
 5. [Modify a main ABAP Program](#5-modify-a-main-abap-program)
 6. [Define a Background Job](#6-define-a-background-job)
 
-## 1. Prerequisites:
+
+## 1. Prerequisites
 
 * This solution was successfully tested on above S/4HANA 2022.
 * To modify Logon groups and RFC server groups(RZ12), this solution will use SMLG_MODIFY function module.
 * To modify Background processing groups (SM61), this solution will uses CL_BP_SERVER_GROUP class.
-* To download solutions, you need to install the **devloper version** of abapGit. First, for detailed instructions on how to install abapGit, please refer to the following link: [abapGit Installation Guide](https://docs.abapgit.org/user-guide/getting-started/install.html). This guide covers prerequisites, installation methods, and configuration steps to help you get started effectively.
+* To download the solution, you need to install the **devloper version** of abapGit. First, for detailed instructions on how to install abapGit, please refer to the following link: [abapGit Installation Guide](https://docs.abapgit.org/user-guide/getting-started/install.html). This guide covers prerequisites, installation methods, and configuration steps to help you get started effectively.
 * It also includes the ability to push messages to Amazon SNS using the [AWS SDK for SAP ABAP](https://aws.amazon.com/blogs/awsforsap/getting-started-with-aws-sdk-for-sap-abap/) to notify BC admins of alerts via email or SNS. We will cover the [4. Configuring AWS SDK for SAP ABAP](#4-configuring-aws-sdk-for-sap-abap). Before that, need to verify requirements, please refer to the following Link: [AWS SDK for SAP ABAP - SAP prerequistes](https://docs.aws.amazon.com/sdk-for-sapabap/latest/developer-guide/prerequisites.html) 
 
 Here is the overall architecture in this solution
