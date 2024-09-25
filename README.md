@@ -1,6 +1,6 @@
 # Automate and Optimize SAP Network Performance in a Multi-AZ deployment
 
-In this lab, you will learn how to build **Multi-AZ network optimized solution** with the features described in the [Automate and Optimise SAP Network Performance in a Multi-AZ deployment](https://quip-amazon.com/cWW0A5ofzPsn/) blog and test in your system in less than an hour. 
+In this lab, you will learn how to build **Multi-AZ network optimized solution** with the features described in the [Automate and Optimise SAP Network Performance in a Multi-AZ deployment](https://aws.amazon.com/blogs/awsforsap/automate-and-optimize-sap-network-performance-in-a-multi-az-deployment/) blog and test in your system in less than an hour. 
 
 ## Table of Contents
 
